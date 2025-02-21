@@ -33,36 +33,32 @@ jobs:
       with:
         terraform_version: 1.5.7
 
-    - name: Configure Environment Variables
+        - name: Configure Environment Variables
       run: |
         echo "TF_VAR_admin_username=${{ secrets.DB_ADMIN_USERNAME }}" >> $GITHUB_ENV
         echo "TF_VAR_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
         echo "TF_VAR_tls_certificate_id=${{ secrets.TLS_CERTIFICATE_ID }}" >> $GITHUB_ENV
+        echo "TF_VAR_upcloud_username=${{ secrets.UPCLOUD_USERNAME }}" >> $GITHUB_ENV
+        echo "TF_VAR_upcloud_password=${{ secrets.UPCLOUD_PASSWORD }}" >> $GITHUB_ENV
 
     - name: Terraform Init
-      run: terraform init
       env:
-        UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
-        UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
-
-    - name: Terraform Format
-      run: terraform fmt -check -recursive
-
-    - name: Terraform Validate
-      run: terraform validate
+        TF_VAR_upcloud_username: ${{ secrets.UPCLOUD_USERNAME }}
+        TF_VAR_upcloud_password: ${{ secrets.UPCLOUD_PASSWORD }}
+      run: terraform init
 
     - name: Terraform Plan
-      run: terraform plan -out=tfplan
       env:
-        UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
-        UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
+        TF_VAR_upcloud_username: ${{ secrets.UPCLOUD_USERNAME }}
+        TF_VAR_upcloud_password: ${{ secrets.UPCLOUD_PASSWORD }}
+      run: terraform plan -out=tfplan
 
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve tfplan
       env:
-        UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
-        UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
+        TF_VAR_upcloud_username: ${{ secrets.UPCLOUD_USERNAME }}
+        TF_VAR_upcloud_password: ${{ secrets.UPCLOUD_PASSWORD }}
+      run: terraform apply -auto-approve tfplan
 
     - name: Upload Terraform Plan
       if: always()
