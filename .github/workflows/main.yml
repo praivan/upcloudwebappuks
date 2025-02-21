@@ -25,15 +25,12 @@ jobs:
         environment: [dev, test, prod]
         include:
           - environment: dev
-            #tfvars: environments/dev.tfvars
             uks_node_count: 3
             zone: fi-hel2
           - environment: test
-            #tfvars: environments/test.tfvars
             uks_node_count: 6
             zone: fi-hel2
           - environment: prod
-            #tfvars: environments/prod.tfvars
             uks_node_count: 24
             zone: fi-hel2
 
@@ -48,17 +45,14 @@ jobs:
       with:
         terraform_version: 1.5.7
 
-    - name: Configure UpCloud Environment Variables
+    - name: Configure Environment Variables
       run: |
-        mkdir -p environments
-        cat ${{ matrix.tfvars }} << EOF
-        zone = "${{ matrix.zone }}"
-        private_network_name = "${{ matrix.environment }}-network"
-        uks_node_count = ${{ matrix.uks_node_count }}
-        admin_username = "${{ secrets.DB_ADMIN_USERNAME }}"
-        admin_password = "${{ secrets.DB_ADMIN_PASSWORD }}"
-        tls_certificate_id = "${{ secrets.TLS_CERTIFICATE_ID }}"
-        EOF
+        echo "TF_VAR_zone=${{ matrix.zone }}" >> $GITHUB_ENV
+        echo "TF_VAR_private_network_name=${{ matrix.environment }}-network" >> $GITHUB_ENV
+        echo "TF_VAR_uks_node_count=${{ matrix.uks_node_count }}" >> $GITHUB_ENV
+        echo "TF_VAR_admin_username=${{ secrets.DB_ADMIN_USERNAME }}" >> $GITHUB_ENV
+        echo "TF_VAR_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
+        echo "TF_VAR_tls_certificate_id=${{ secrets.TLS_CERTIFICATE_ID }}" >> $GITHUB_ENV
 
     - name: Terraform Init
       run: terraform init
@@ -76,7 +70,7 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -var-file="${{ matrix.tfvars }}" -out=tfplan
+      run: terraform plan -out=tfplan
       env:
         UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
         UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
