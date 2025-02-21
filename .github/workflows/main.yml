@@ -50,6 +50,7 @@ jobs:
 
     - name: Configure UpCloud Environment Variables
       run: |
+        mkdir -p environments
         cat > ${{ matrix.tfvars }} << EOF
         zone = "${{ matrix.zone }}"
         private_network_name = "${{ matrix.environment }}-network"
@@ -89,7 +90,7 @@ jobs:
 
     - name: Upload Terraform Plan
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: terraform-plan-${{ matrix.environment }}
         path: tfplan
@@ -102,7 +103,7 @@ jobs:
 
     - name: Upload Terraform Output
       if: success() && github.event_name == 'push'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: terraform-output-${{ matrix.environment }}
         path: tf-output-${{ matrix.environment }}.json
