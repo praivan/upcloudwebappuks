@@ -33,7 +33,7 @@ jobs:
       with:
         terraform_version: 1.5.7
 
-        - name: Configure Environment Variables
+    - name: Configure Environment Variables
       run: |
         echo "TF_VAR_admin_username=${{ secrets.DB_ADMIN_USERNAME }}" >> $GITHUB_ENV
         echo "TF_VAR_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
