@@ -51,7 +51,7 @@ jobs:
     - name: Configure UpCloud Environment Variables
       run: |
         mkdir -p environments
-        cat > ${{ matrix.tfvars }} << EOF
+        cat ${{ matrix.tfvars }} << EOF
         zone = "${{ matrix.zone }}"
         private_network_name = "${{ matrix.environment }}-network"
         uks_node_count = ${{ matrix.uks_node_count }}
