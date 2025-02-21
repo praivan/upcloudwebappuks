@@ -6,7 +6,7 @@ This repository contains Terraform configurations for deploying a production-gra
 
 ## Core Components
 
-### Network Architecture
+### Network Architecture (example CIDR)
 - **Private Network Layout**
   - UKS Subnet: `10.10.1.0/24`
   - Database Subnet: `10.10.2.0/24`
