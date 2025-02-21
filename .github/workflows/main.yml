@@ -14,27 +14,15 @@ env:
   TF_LOG: INFO
   TF_VAR_network_family: "IPv4"
   TF_VAR_network_dhcp: true
+  TF_VAR_zone: "fi-hel2"
+  TF_VAR_private_network_name: "production-network"
+  TF_VAR_uks_node_count: 24
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        environment: [dev, test, prod]
-        include:
-          - environment: dev
-            uks_node_count: 3
-            zone: fi-hel2
-          - environment: test
-            uks_node_count: 6
-            zone: fi-hel2
-          - environment: prod
-            uks_node_count: 24
-            zone: fi-hel2
-
-    environment: ${{ matrix.environment }}
+    environment: production
     
     steps:
     - name: Checkout
@@ -47,9 +35,6 @@ jobs:
 
     - name: Configure Environment Variables
       run: |
-        echo "TF_VAR_zone=${{ matrix.zone }}" >> $GITHUB_ENV
-        echo "TF_VAR_private_network_name=${{ matrix.environment }}-network" >> $GITHUB_ENV
-        echo "TF_VAR_uks_node_count=${{ matrix.uks_node_count }}" >> $GITHUB_ENV
         echo "TF_VAR_admin_username=${{ secrets.DB_ADMIN_USERNAME }}" >> $GITHUB_ENV
         echo "TF_VAR_admin_password=${{ secrets.DB_ADMIN_PASSWORD }}" >> $GITHUB_ENV
         echo "TF_VAR_tls_certificate_id=${{ secrets.TLS_CERTIFICATE_ID }}" >> $GITHUB_ENV
@@ -59,9 +44,6 @@ jobs:
       env:
         UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
         UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
-
-    - name: Terraform Workspace
-      run: terraform workspace select ${{ matrix.environment }} || terraform workspace new ${{ matrix.environment }}
 
     - name: Terraform Format
       run: terraform fmt -check -recursive
@@ -86,19 +68,19 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: terraform-plan-${{ matrix.environment }}
+        name: terraform-plan
         path: tfplan
         retention-days: 5
 
     - name: Save Terraform Output
       if: success() && github.event_name == 'push'
       run: |
-        terraform output -json > tf-output-${{ matrix.environment }}.json
+        terraform output -json > tf-output.json
 
     - name: Upload Terraform Output
       if: success() && github.event_name == 'push'
       uses: actions/upload-artifact@v4
       with:
-        name: terraform-output-${{ matrix.environment }}
-        path: tf-output-${{ matrix.environment }}.json
+        name: terraform-output
+        path: tf-output.json
         retention-days: 5
