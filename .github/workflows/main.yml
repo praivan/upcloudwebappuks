@@ -1,0 +1,109 @@
+name: UpCloud Infrastructure Deployment
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.tf'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  TF_LOG: INFO
+  TF_VAR_network_family: "IPv4"
+  TF_VAR_network_dhcp: true
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [dev, test, prod]
+        include:
+          - environment: dev
+            tfvars: environments/dev.tfvars
+            uks_node_count: 3
+            zone: fi-hel2
+          - environment: test
+            tfvars: environments/test.tfvars
+            uks_node_count: 6
+            zone: fi-hel2
+          - environment: prod
+            tfvars: environments/prod.tfvars
+            uks_node_count: 24
+            zone: fi-hel2
+
+    environment: ${{ matrix.environment }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.7
+
+    - name: Configure UpCloud Environment Variables
+      run: |
+        cat > ${{ matrix.tfvars }} << EOF
+        zone = "${{ matrix.zone }}"
+        private_network_name = "${{ matrix.environment }}-network"
+        uks_node_count = ${{ matrix.uks_node_count }}
+        admin_username = "${{ secrets.DB_ADMIN_USERNAME }}"
+        admin_password = "${{ secrets.DB_ADMIN_PASSWORD }}"
+        tls_certificate_id = "${{ secrets.TLS_CERTIFICATE_ID }}"
+        EOF
+
+    - name: Terraform Init
+      run: terraform init
+      env:
+        UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
+        UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
+
+    - name: Terraform Workspace
+      run: terraform workspace select ${{ matrix.environment }} || terraform workspace new ${{ matrix.environment }}
+
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan -var-file="${{ matrix.tfvars }}" -out=tfplan
+      env:
+        UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
+        UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve tfplan
+      env:
+        UPCLOUD_USERNAME: ${{ secrets.UPCLOUD_USERNAME }}
+        UPCLOUD_PASSWORD: ${{ secrets.UPCLOUD_PASSWORD }}
+
+    - name: Upload Terraform Plan
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-plan-${{ matrix.environment }}
+        path: tfplan
+        retention-days: 5
+
+    - name: Save Terraform Output
+      if: success() && github.event_name == 'push'
+      run: |
+        terraform output -json > tf-output-${{ matrix.environment }}.json
+
+    - name: Upload Terraform Output
+      if: success() && github.event_name == 'push'
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-output-${{ matrix.environment }}
+        path: tf-output-${{ matrix.environment }}.json
+        retention-days: 5
