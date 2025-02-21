@@ -1,0 +1,8 @@
+upcloud_username = "APIUSERNAME"
+upcloud_password = "PASSWORD"
+
+# Optionally override any defaults here
+region = "REGION-OF-YOUR-CHOICE"
+
+# If you have a TLS certificate in UpCloud:
+tls_certificate_id = ""

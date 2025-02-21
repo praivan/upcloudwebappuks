@@ -1,0 +1,73 @@
+# Terraform files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!terraform.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
+
+# Local development
+.env
+.envrc
+*.log
+*.bak
+*~
+
+# Credentials and secrets
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+kubeconfig*
+.kube/
+secrets/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# Test files
+**/test/
+**/tests/
+**/*_test.tf
+**/*.test.tf
+
+# Backup files
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+
+# Local documentation
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# Generated files
+*.generated.*
+generated/
