@@ -1,5 +1,5 @@
 resource "upcloud_kubernetes_cluster" "cluster" {
-  name                = "modern-webapp-uks"
+  name                    = "modern-webapp-uks"
   control_plane_ip_filter = toset([var.uks_subnet])
   # The control_plane_ip_filter is used to specify which IP ranges can access the Kubernetes control plane.
   # It needs to be a set of CIDR ranges, not a single string.

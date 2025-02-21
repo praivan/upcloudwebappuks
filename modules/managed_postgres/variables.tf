@@ -1,22 +1,22 @@
 variable "plan" {
   description = "PostgreSQL plan in UpCloud"
   type        = string
-  default = "2x16xCPU-64GB-1500GB"
+  default     = "2x16xCPU-64GB-1500GB"
 }
 variable "zone" {
   description = "Deployment zone (region)"
   type        = string
-  default = "fi-hel2"
+  default     = "fi-hel2"
 }
 variable "title" {
   description = "PostgreSQL instance title in UpCloud"
   type        = string
-  default = "webapp-db"
+  default     = "webapp-db"
 }
 variable "network_family" {
   description = "Network family (e.g. IPv4)"
   type        = string
-  default = "IPv4"
+  default     = "IPv4"
 }
 variable "network_id" {
   description = "ID of the private network"
@@ -44,5 +44,5 @@ variable "timezone" {
   description = "Timezone for the database in PostgreSQL format"
   type        = string
   default     = "Europe/Helsinki"
-  
+
 }

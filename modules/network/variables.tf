@@ -12,7 +12,7 @@ variable "private_network_name" {
 variable "network_family" {
   description = "Network family (e.g. IPv4)"
   type        = string
-  default = "IPv4"
+  default     = "IPv4"
 }
 
 variable "network_dhcp" {
@@ -24,7 +24,7 @@ variable "network_dhcp" {
 variable "internal_lb_plan" {
   description = "Plan for the internal load balancer"
   type        = string
-  default = "production-small"
+  default     = "production-small"
 }
 variable "lb_address" {
   description = "CIDR for the Load balancer"

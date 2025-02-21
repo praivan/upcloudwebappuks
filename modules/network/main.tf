@@ -19,9 +19,9 @@ resource "upcloud_network" "uks_network" {
   router = upcloud_router.internal_router.id
 
   ip_network {
-    address           = var.uks_subnet
-    family            = var.network_family
-    dhcp              = var.network_dhcp
+    address            = var.uks_subnet
+    family             = var.network_family
+    dhcp               = var.network_dhcp
     dhcp_default_route = true
   }
 }
@@ -67,9 +67,9 @@ resource "upcloud_router" "internal_router" {
   name = "internal_router"
 }
 resource "upcloud_gateway" "nat" {
-  name       = "nat-gateway"
-  zone       = var.zone
-  features = [ "nat" ]
+  name     = "nat-gateway"
+  zone     = var.zone
+  features = ["nat"]
   router {
     id = upcloud_router.internal_router.id
   }
@@ -77,10 +77,10 @@ resource "upcloud_gateway" "nat" {
 
 resource "upcloud_loadbalancer" "internal" {
   configured_status = "started"
-  name    = "${var.private_network_name}-internal-lb"
-  zone    = var.zone
-  plan    = var.internal_lb_plan
- 
+  name              = "${var.private_network_name}-internal-lb"
+  zone              = var.zone
+  plan              = var.internal_lb_plan
+
   networks {
     name    = "Private-Net"
     type    = "private"

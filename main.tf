@@ -7,11 +7,11 @@ module "network" {
 }
 
 module "uks" {
-  source                  = "./modules/uks"
-  zone                    = var.zone  
-  uks_subnet              =  module.network.uks_subnet
-  uks_subnet_id           = module.network.network_ids["uks"]
-  node_count              = var.uks_node_count
+  source        = "./modules/uks"
+  zone          = var.zone
+  uks_subnet    = module.network.uks_subnet
+  uks_subnet_id = module.network.network_ids["uks"]
+  node_count    = var.uks_node_count
 }
 
 module "managed_postgres" {
@@ -31,10 +31,10 @@ module "opensearch" {
 }
 
 module "valkey" {
-  source     = "./modules/valkey"
-  zone     = var.zone
+  source               = "./modules/valkey"
+  zone                 = var.zone
   caching_network_name = module.network.caching_network_name
-  uuid = module.network.network_ids["caching"]
+  uuid                 = module.network.network_ids["caching"]
 }
 
 module "load_balancer" {

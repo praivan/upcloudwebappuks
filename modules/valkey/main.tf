@@ -7,10 +7,10 @@ resource "upcloud_managed_database_valkey" "valkey" {
   properties {
     public_access = false
   }
-    network {
+  network {
     family = var.network_family
-    name= var.caching_network_name
-    type = "private"
-    uuid = var.uuid
-    }  
+    name   = var.caching_network_name
+    type   = "private"
+    uuid   = var.uuid
+  }
 }

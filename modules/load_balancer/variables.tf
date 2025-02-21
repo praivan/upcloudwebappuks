@@ -17,11 +17,11 @@ variable "network_id" {
 variable "network_family" {
   description = "Network family (e.g. IPv4)"
   type        = string
-  default = "IPv4"
+  default     = "IPv4"
 }
 
 variable "lb_plan" {
   description = "Plan for the load balancer"
   type        = string
-  default = "production-small"
+  default     = "production-small"
 }

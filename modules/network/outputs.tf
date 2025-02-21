@@ -15,15 +15,15 @@ output "uks_subnet_id" {
 }
 
 output "db_network_name" {
-value = upcloud_network.db_network.name
+  value = upcloud_network.db_network.name
 }
 
 output "logging_network_name" {
-value = upcloud_network.logging_network.name
+  value = upcloud_network.logging_network.name
 }
 
 output "caching_network_name" {
-value = upcloud_network.caching_network.name
+  value = upcloud_network.caching_network.name
 }
 
 
