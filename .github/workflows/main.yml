@@ -47,36 +47,8 @@ jobs:
         TF_VAR_upcloud_password: ${{ secrets.UPCLOUD_PASSWORD }}
       run: terraform init
 
-    - name: Terraform Plan
+    - name: Terraform Destroy
       env:
         TF_VAR_upcloud_username: ${{ secrets.UPCLOUD_USERNAME }}
         TF_VAR_upcloud_password: ${{ secrets.UPCLOUD_PASSWORD }}
-      run: terraform plan -out=tfplan
-
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      env:
-        TF_VAR_upcloud_username: ${{ secrets.UPCLOUD_USERNAME }}
-        TF_VAR_upcloud_password: ${{ secrets.UPCLOUD_PASSWORD }}
-      run: terraform apply -auto-approve tfplan
-
-    - name: Upload Terraform Plan
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: terraform-plan
-        path: tfplan
-        retention-days: 5
-
-    - name: Save Terraform Output
-      if: success() && github.event_name == 'push'
-      run: |
-        terraform output -json > tf-output.json
-
-    - name: Upload Terraform Output
-      if: success() && github.event_name == 'push'
-      uses: actions/upload-artifact@v4
-      with:
-        name: terraform-output
-        path: tf-output.json
-        retention-days: 5
+      run: terraform destroy
