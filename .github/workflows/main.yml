@@ -25,15 +25,15 @@ jobs:
         environment: [dev, test, prod]
         include:
           - environment: dev
-            tfvars: environments/dev.tfvars
+            #tfvars: environments/dev.tfvars
             uks_node_count: 3
             zone: fi-hel2
           - environment: test
-            tfvars: environments/test.tfvars
+            #tfvars: environments/test.tfvars
             uks_node_count: 6
             zone: fi-hel2
           - environment: prod
-            tfvars: environments/prod.tfvars
+            #tfvars: environments/prod.tfvars
             uks_node_count: 24
             zone: fi-hel2
 
